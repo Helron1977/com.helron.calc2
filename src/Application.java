@@ -8,14 +8,14 @@ public class Application {
         tokenizer.add("[*/]", 4); // mult or divide
         tokenizer.add("[0-9]+",5); // integer number
 
-        try {
-            tokenizer.tokenize("1+1");
+        tokenizer.tokenize("1+56*4");
 
-            for (Token token : tokenizer.getTokens()) {
-                System.out.println("" + token.token + " " + token.sequence);
-            }
+        Parser parser = new Parser();
+        try {
+            ExpressionNode expression = parser.parse(tokenizer.getTokens());
+            System.out.println("La valeur de l'expression est "+expression.getValue());
         }
-        catch (Tokenizer.ParserException e) {
+        catch (ParserException e) {
             System.out.println(e.getMessage());
         }
 

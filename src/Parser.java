@@ -7,16 +7,17 @@ public class Parser {
     LinkedList<Token> tokens;
     Token lookahead;
 
-    public void parse(LinkedList<Token> tokens) {
+    public ExpressionNode parse(LinkedList<Token> tokens) {
         Collections.copy(this.tokens, tokens);
 
         lookahead = this.tokens.getFirst();
 
-        expression();
+        ExpressionNode expression = expression();
 
         if (lookahead.token != Token.EPSILON) {
-            throw new ParserException("Unexpected symbol %s found", lookahead);
+            throw new ParserException(" %s UnrecognizedToken", lookahead);
         }
+        return expression;
     }
 
     /**
@@ -25,44 +26,53 @@ public class Parser {
      */
     private ExpressionNode expression() {
 
-        termeSigné();
-        sommeDeTermes();
-        return null;
+        ExpressionNode expression = termeSigné();
+        return sommeDeTermes(expression);
     }
 
     /**
      * une somme de terme .. commence par un terme puis une somme de terme
      */
-    private void sommeDeTermes() {
+    private ExpressionNode sommeDeTermes(ExpressionNode expression) {
 
-        if (lookahead.token == Token.PLUSMINUS)
-        {
+        if (lookahead.token == Token.PLUSMINUS) {
+            AdditionExpressionNode sum;
+            if (expression.getType() == ExpressionNode.ADDITION_NODE)
+                sum = (AdditionExpressionNode)expression;
+            else
+                sum = new AdditionExpressionNode(expression, true);
+
+            boolean positive = lookahead.sequence.equals("+");
             nextToken();
-            terme();
-            sommeDeTermes();
+            ExpressionNode t = terme();
+            sum.add(t, positive);
+
+            return sommeDeTermes(sum);
         }
-        else
-        {
-            //  Fin
-        }
+
+        return expression;
     }
 
     /**
      * un terme signé commence par un plus ou un moins puis un terme
+     * @return
      */
-    private void termeSigné() {
+    private ExpressionNode termeSigné() {
 
-        if (lookahead.token == Token.PLUSMINUS)
-        {
+        if (lookahead.token == Token.PLUSMINUS) {
             // l'expression d'un terme signé, c'est la suite de Token : PLUSMINUS;termeSigné
+            boolean positive = lookahead.sequence.equals("+");
             nextToken();
-            terme();
+            ExpressionNode terme = terme();
+            if (positive){
+                return terme;
+            } else {
+                return  new AdditionExpressionNode( terme, false);
+            }
         }
-        else
-        {
-            // ou un simple Token  -> term
-            terme();
-        }
+
+        // ou un simple Token  -> terme
+        return terme();
     }
 
     private ExpressionNode terme()
