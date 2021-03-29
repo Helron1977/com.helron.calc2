@@ -155,11 +155,10 @@ public class Parser {
 
             nextToken();
             return expression;
-        } else {
-            // argument -> value
-            value();
         }
-        return null;
+        // argument -> value
+            return value();
+
     }
 
     private ExpressionNode value()

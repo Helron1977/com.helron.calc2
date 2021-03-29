@@ -8,7 +8,11 @@ public class Application {
         tokenizer.add("[*/]", 4); // mult or divide
         tokenizer.add("[0-9]+",5); // integer number
 
-        tokenizer.tokenize("1+56*4");
+        tokenizer.tokenize("1+(56+2)");
+
+
+            System.out.println(tokenizer.getTokens().getFirst());
+
 
         Parser parser = new Parser();
         try {
