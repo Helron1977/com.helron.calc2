@@ -8,7 +8,7 @@ public class Parser {
     Token lookahead;
 
     public ExpressionNode parse(LinkedList<Token> tokens) {
-        Collections.copy(this.tokens, tokens);
+        this.tokens = new LinkedList(tokens);
 
         lookahead = this.tokens.getFirst();
 

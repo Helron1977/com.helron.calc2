@@ -18,8 +18,5 @@ public class Application {
         catch (ParserException e) {
             System.out.println(e.getMessage());
         }
-
-
-
     }
 }
