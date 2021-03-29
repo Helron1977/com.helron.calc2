@@ -1,0 +1,64 @@
+L'etude d'une expression mathematique.
+
+Lexer
+
+Afin de traiter une expression mathematique, je passe par la transcription sous forme de Tokens d'une expression complete.
+A cette fin, j'utilise une class Tokenizer qui associe a chaque sequence, un Token.
+Afin de realiser ce traitement je définis :
+    - Une classe Token qui a une clef , ici un int associe une sequence.
+    - une classe TokenInfo qui a une clef associe un pattern ( regex)
+
+    La valeur des clefs est fixée par la décalration de champs statics dans la methode Token.
+
+        public static final int EPSILON = 0;
+        public static final int PLUSMINUS = 1;
+        public static final int MULTDIV = 2;
+        public static final int OPEN_BRACKET = 3;
+        public static final int CLOSE_BRACKET = 4;
+        public static final int NUMBER = 5;
+
+    Epsilon represente la fin de l'expression et va servir a mettre un terme au traitement.
+
+Ainsi donc la classe Tokenizer possede une List de TokenInfo et construit via une methode tokenize, une liste de token.
+
+A ce stade l'expression est convertie sous forme d'une LinkedList<Token>, et j'ajoute un getteur sur ce champ.
+
+
+Parser :
+
+Analyse de la grammaire :
+
+Soit une list de Token;
+La possibilité de connaitre le Token en cours et le suivant. Le but est de produire une analyse d'une expression.
+Cas de figure :
+
+Nous partons du principe que nous ne faisons pas de retour en arrière et ne faisons qu'avancer dans l'expression.
+
+un number peut etre suivi d'un +- ou d'un */ faisant des morceaux d'expresseion soit des termes soit des facteurs
+
+1+1  > le token plus/minus peut etre suivi d'un terme ou d'un token signé. < un autre Token+-
++1+1 > somme de terme dont le premier est signé
++1 > > terme signé
+1+1+1+1+1... est une somme de terme signé.
+1* 1 terme puis facteur
+Sauf si c'est la fin de l'expression [
+    Donc toutes expressions commencent par un terme Signé.
+    Un terme signé est introduit par +- plus terme ou un terme simple ( car positif par defaut mais c'est sementique)
+    Donc une somme de terme commence par un terme puis une somme de termes.
+    par opposition on peut definir un term par la suite d'un terme et d'un factor.
+    une suite de facteur est introduit par */ plus une suite de facteurs
+    un facteur peut etre signé > +- factor
+    un factor peut etre suivi d'un argument entre parenthese qui doit retourner une expression a traiter.
+    les arguments peuvent etre réduit a des valeurs. Dans l'exercice des IntNumbers.
+
+
+A partir de cette analyse on definie ce qu'est :
+    -une ExpressionNode classe mère des classes suivantes :
+    -AdditionExpressionNode
+    -MultiplicationExpressionNode
+    -IntNumberNode
+    -SequenceExpressionNode > pour construire l'arbre avec les differents nodes
+
+
+
+
